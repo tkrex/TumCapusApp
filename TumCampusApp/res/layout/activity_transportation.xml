@@ -71,6 +71,5 @@
         android:layout_height="fill_parent"
         android:scrollbars="vertical"
         android:visibility="gone" />
-    
 
 </LinearLayout>

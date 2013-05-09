@@ -2,7 +2,6 @@
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -20,7 +19,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 import de.tum.in.tumcampusapp.R;
 import de.tum.in.tumcampusapp.auxiliary.Const;
 import de.tum.in.tumcampusapp.models.managers.TransportManager;
@@ -30,10 +28,10 @@ import de.tum.in.tumcampusapp.models.managers.TransportManager;
  */
 public class TransportationActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {
 
-	private EditText searchTextField;
 	private ListView listViewResults;
 	private ListView listViewSuggestionsAndSaved = null;
 	private RelativeLayout progressLayout;
+	private EditText searchTextField;
 	private TransportManager transportaionManager;
 
 	/**
@@ -49,6 +47,29 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 			return true;
 		}
 		return false;
+	}
+	
+	private void hideKeyboard() {
+		((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+				searchTextField.getWindowToken(), 0);
+	}
+
+	public void onClick(View view) {
+		int viewId = view.getId();
+		switch (viewId) {
+		case R.id.activity_transport_dosearch:
+			hideKeyboard();
+			searchForStations(searchTextField.getText().toString());
+			break;
+		case R.id.activity_transport_domore:
+			hideKeyboard();
+			Cursor stationCursor = transportaionManager.getAllFromDb();
+			SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
+			adapter.changeCursor(stationCursor);			
+			listViewResults.setVisibility(View.GONE);
+			listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
+			break;
+		}
 	}
 
 	@Override
@@ -87,74 +108,13 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		listViewResults.setAdapter(adapterResults);
 	}
 
-	public void onClick(View view) {
-		int viewId = view.getId();
-		switch (viewId) {
-		case R.id.activity_transport_dosearch:
-			((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-					searchTextField.getWindowToken(), 0);
-			searchForStations(searchTextField.getText().toString());
-			break;
-		case R.id.activity_transport_domore:
-			Cursor stationCursor = transportaionManager.getAllFromDb();
-			SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
-			adapter.changeCursor(stationCursor);			
-			listViewResults.setVisibility(View.GONE);
-			listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
-			break;
-		}
-	}
-
-	public boolean searchForStations(final String inputText) {
-		final Activity activity = this;
-		progressLayout.setVisibility(View.VISIBLE);
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// Searchs station on website
-				String message = "";
-				TransportManager tm = new TransportManager(activity);
-				Cursor stationCursor = null;
-				try {
-					if (!connected()) {
-						throw new Exception(getString(R.string.no_internet_connection));
-					}
-					stationCursor = tm.getStationsFromExternal(inputText);
-				} catch (Exception e) {
-					// show errors in departures list
-					MatrixCursor stationMatrixCursor = new MatrixCursor(new String[] { "name", "_id" });
-					stationMatrixCursor.addRow(new String[] { e.getMessage(), "0" });
-					stationCursor = stationMatrixCursor;
-				}
-
-				final Cursor finalStationCursor = stationCursor;
-				final String message2 = message;
-
-				// show stations from search result in station list
-				// show error message if necessary
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						progressLayout.setVisibility(View.GONE);
-						if (finalStationCursor != null) {
-							SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
-							adapter.changeCursor(finalStationCursor);
-							listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
-							listViewResults.setVisibility(View.GONE);
-						}
-					}
-				});
-			}
-		}).start();
-		return false;
-	}
-
 	@Override
 	public void onItemClick(final AdapterView<?> av, View v, int position, long id) {
 		// click on station in list
 		Cursor departureCursor = (Cursor) av.getAdapter().getItem(position);
 		final String location = departureCursor.getString(departureCursor.getColumnIndex(Const.NAME_COLUMN));
+		
+		listViewResults.setEnabled(true);
 
 		// save clicked station into db and refresh station list
 		// (could be clicked on search result list)
@@ -166,6 +126,7 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		progressLayout.setVisibility(View.VISIBLE);
 
 		new Thread(new Runnable() {
+			
 			@Override
 			public void run() {
 				// get departures from website
@@ -178,10 +139,10 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 					departureCursor = tm.getDeparturesFromExternal(location);
 
 				} catch (Exception e) {
-					// show errors in departures list
 					MatrixCursor departureMatrixCursor = new MatrixCursor(new String[] { "name", "desc", "_id" });
 					departureMatrixCursor.addRow(new String[] { e.getMessage(), "", "0" });
 					departureCursor = departureMatrixCursor;
+					listViewResults.setEnabled(false);
 				}
 
 				// show departures in list
@@ -224,6 +185,56 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		builder.setPositiveButton(getString(R.string.yes), listener);
 		builder.setNegativeButton(getString(R.string.no), null);
 		builder.show();
+		return false;
+	}
+
+	/**
+	 * Searchs the Webservice for stations
+	 * @param inputText
+	 * @return
+	 */
+	public boolean searchForStations(final String inputText) {
+		final Activity activity = this;
+		progressLayout.setVisibility(View.VISIBLE);
+
+		listViewSuggestionsAndSaved.setEnabled(true);
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				TransportManager tm = new TransportManager(activity);
+				Cursor stationCursor = null;
+				try {
+					if (!connected()) {
+						throw new Exception(getString(R.string.no_internet_connection));
+					}
+					stationCursor = tm.getStationsFromExternal(inputText);
+				} catch (Exception e) {
+					MatrixCursor stationMatrixCursor = new MatrixCursor(new String[] { "name", "_id" });
+					stationMatrixCursor.addRow(new String[] { e.getMessage(), "0" });
+					stationCursor = stationMatrixCursor;
+					listViewSuggestionsAndSaved.setEnabled(false);
+				}
+
+				final Cursor finalStationCursor = stationCursor;
+
+				// show stations from search result in station list
+				// show error message if necessary
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						progressLayout.setVisibility(View.GONE);
+						if (finalStationCursor != null) {
+							SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
+							adapter.changeCursor(finalStationCursor);
+							listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
+							listViewResults.setVisibility(View.GONE);
+						}
+					}
+				});
+			}
+		}).start();
 		return false;
 	}
 }

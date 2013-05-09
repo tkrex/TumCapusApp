@@ -71,9 +71,7 @@ public class TransportManager {
 
 		for (int j = 2; j < jsonArray.length(); j = j + 3) {
 			String name = jsonArray.getString(j) + " " + jsonArray.getString(j + 1).trim();
-
 			String desc = jsonArray.getString(j + 2) + " min";
-
 			mc.addRow(new String[] { name, desc, String.valueOf(j) });
 		}
 		return mc;

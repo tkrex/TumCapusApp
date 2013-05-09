@@ -6,7 +6,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import de.tum.in.tumcampusapp.R;
 
-public class TemplateActivity extends Activity {
+public class MockActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
