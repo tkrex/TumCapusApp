@@ -6,13 +6,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.tum.in.tumcampusapp.auxiliary.JsonConst;
-import de.tum.in.tumcampusapp.auxiliary.Utils;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.tum.in.tumcampusapp.auxiliary.JsonConst;
+import de.tum.in.tumcampusapp.auxiliary.Utils;
 
 /**
  * Transport Manager, handles database stuff, internet connections
@@ -39,6 +38,41 @@ public class TransportManager {
 	}
 
 	/**
+	 * delete a station from the database
+	 * 
+	 * <pre>
+	 * @param name Station name
+	 * </pre>
+	 */
+	public void deleteFromDb(String name) {
+		db.execSQL("DELETE FROM transports WHERE name = ?", new String[] { name });
+	}
+
+	/**
+	 * Checks if the transports table is empty
+	 * 
+	 * @return true if no stations are available, else false
+	 */
+	public boolean empty() {
+		boolean result = true;
+		Cursor c = db.rawQuery("SELECT name FROM transports LIMIT 1", null);
+		if (c.moveToNext()) {
+			result = false;
+		}
+		c.close();
+		return result;
+	}
+
+	/**
+	 * Get all stations from the database
+	 * 
+	 * @return Database cursor (name, _id)
+	 */
+	public Cursor getAllFromDb() {
+		return db.rawQuery("SELECT name, name as _id FROM transports ORDER BY name", null);
+	}
+
+	/**
 	 * Get all departures for a station
 	 * 
 	 * Cursor includes target station name, departure in remaining minutes
@@ -53,18 +87,15 @@ public class TransportManager {
 		String baseUrl = "http://query.yahooapis.com/v1/public/yql?format=json&q=";
 
 		// ISO needed for mvv
-		String lookupUrl = "http://www.mvg-live.de/ims/dfiStaticAnzeige.svc?haltestelle="
-				+ URLEncoder.encode(location, "ISO-8859-1");
+		String lookupUrl = "http://www.mvg-live.de/ims/dfiStaticAnzeige.svc?haltestelle=" + URLEncoder.encode(location, "ISO-8859-1");
 
-		String query = URLEncoder.encode("select content from html where url=\"" + lookupUrl
-				+ "\" and xpath=\"//td[contains(@class,'Column')]/p\"");
+		String query = URLEncoder.encode("select content from html where url=\"" + lookupUrl + "\" and xpath=\"//td[contains(@class,'Column')]/p\"");
 		Utils.log(query);
 
-		JSONArray jsonArray = Utils.downloadJson(baseUrl + query).getJSONObject("query").getJSONObject("results")
-				.getJSONArray("p");
+		JSONArray jsonArray = Utils.downloadJson(baseUrl + query).getJSONObject("query").getJSONObject("results").getJSONArray("p");
 
 		if (jsonArray.length() < 3) {
-			throw new Exception("No departures found");
+			throw new Exception("Sorry, no departures could be found");
 		}
 
 		MatrixCursor mc = new MatrixCursor(new String[] { "name", "desc", "_id" });
@@ -90,11 +121,9 @@ public class TransportManager {
 
 		String baseUrl = "http://query.yahooapis.com/v1/public/yql?format=json&q=";
 
-		String lookupUrl = "http://www.mvg-live.de/ims/dfiStaticAuswahl.svc?haltestelle="
-				+ URLEncoder.encode(location, "ISO-8859-1");
+		String lookupUrl = "http://www.mvg-live.de/ims/dfiStaticAuswahl.svc?haltestelle=" + URLEncoder.encode(location, "ISO-8859-1");
 
-		String query = URLEncoder.encode("select content from html where url=\"" + lookupUrl
-				+ "\" and xpath=\"//a[contains(@href,'haltestelle')]\"");
+		String query = URLEncoder.encode("select content from html where url=\"" + lookupUrl + "\" and xpath=\"//a[contains(@href,'haltestelle')]\"");
 		Utils.log(query);
 
 		JSONObject jsonObj = Utils.downloadJson(baseUrl + query).getJSONObject("query");
@@ -106,46 +135,21 @@ public class TransportManager {
 				jsonArray = (JSONArray) obj;
 			} else {
 				if (obj.toString().contains("aktualisieren")) {
-					throw new JSONException("");
+					throw new JSONException("Unkown error");
 				}
 				jsonArray.put(obj);
 			}
 		} catch (JSONException e) {
-			throw new Exception("No station found");
+			throw new Exception("Sorry, no station could be found");
 		}
 
 		MatrixCursor mc = new MatrixCursor(new String[] { "name", "_id" });
 
 		for (int j = 0; j < jsonArray.length(); j++) {
 			String station = jsonArray.getString(j).replaceAll("\\s+", " ");
-
 			mc.addRow(new String[] { station, String.valueOf(j) });
 		}
 		return mc;
-	}
-
-	/**
-	 * Get all stations from the database
-	 * 
-	 * @return Database cursor (name, _id)
-	 */
-	public Cursor getAllFromDb() {
-		return db.rawQuery("SELECT name, name as _id FROM transports ORDER BY name", null);
-	}
-
-	/**
-	 * Checks if the transports table is empty
-	 * 
-	 * @return true if no stations are available, else false
-	 */
-	public boolean empty() {
-		boolean result = true;
-		Cursor c = db.rawQuery("SELECT name FROM transports LIMIT 1", null);
-		if (c.moveToNext()) {
-			result = false;
-		}
-		c.close();
-		return result;
 	}
 
 	/**
@@ -163,16 +167,5 @@ public class TransportManager {
 			return;
 		}
 		db.execSQL("REPLACE INTO transports (name) VALUES (?)", new String[] { name });
-	}
-
-	/**
-	 * delete a station from the database
-	 * 
-	 * <pre>
-	 * @param name Station name
-	 * </pre>
-	 */
-	public void deleteFromDb(String name) {
-		db.execSQL("DELETE FROM transports WHERE name = ?", new String[] { name });
 	}
 }

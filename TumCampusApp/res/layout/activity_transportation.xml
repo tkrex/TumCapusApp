@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_transport_main_layout"
+    android:focusableInTouchMode="true"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -13,6 +15,7 @@
             android:id="@+id/activity_transport_domore"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+            android:background="@android:color/transparent"
             android:onClick="onClick"
             android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_more" />
@@ -31,6 +34,7 @@
             android:id="@+id/activity_transport_dosearch"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+            android:background="@android:color/transparent"
             android:onClick="onClick"
             android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_search" />
@@ -59,10 +63,21 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/activity_transport_textview_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="activity_transport_textview_info"
+        android:textStyle="bold"
+        android:visibility="gone" >
+    </TextView>
+
     <ListView
         android:id="@+id/activity_transport_listview_result"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:padding="8dp"
         android:scrollbars="vertical" />
 
     <ListView

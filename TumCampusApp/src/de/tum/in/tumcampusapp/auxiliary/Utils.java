@@ -318,15 +318,14 @@ public class Utils {
 
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpParams params = httpclient.getParams();
-		HttpConnectionParams.setSoTimeout(params, 5000);
-		HttpConnectionParams.setConnectionTimeout(params, 5000);
+		HttpConnectionParams.setSoTimeout(params, 8000);
+		HttpConnectionParams.setConnectionTimeout(params, 8000);
 
 		HttpEntity entity = null;
 		try {
 			entity = httpclient.execute(new HttpGet(url)).getEntity();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Exception("Timeout");
+			throw new Exception("Sorry, there was a timeout processing your request");
 		}
 
 		String data = "";

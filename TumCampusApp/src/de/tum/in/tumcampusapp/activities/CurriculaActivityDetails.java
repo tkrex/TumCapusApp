@@ -44,11 +44,11 @@ public class CurriculaActivityDetails extends Activity {
 		}
 	};
 
+	private WebView browser;
 	private RelativeLayout errorLayout;
 	/** Http client to fetch the curricula data */
 	private DefaultHttpClient httpClient;
 	private RelativeLayout progressLayout;
-	private WebView browser;
 
 	/**
 	 * Extract the results from a document fetched from the given URL.

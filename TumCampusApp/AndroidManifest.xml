@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.StartActivity"
+            android:name=".activities.StartActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,84 +30,84 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.MockActivity"
+            android:name=".activities.MockActivity"
             android:label="@string/app_name" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.NewsActivity"
+            android:name=".activities.NewsActivity"
             android:label="@string/news" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.PlansActivity"
+            android:name=".activities.PlansActivity"
             android:label="@string/plans" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.PlansActivityDetails"
+            android:name=".activities.PlansActivityDetails"
             android:label="@string/plans" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.GradesActivity"
+            android:name=".activities.GradesActivity"
             android:label="@string/grades" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.preferences.UserPreferencesActivity"
+            android:name=".preferences.UserPreferencesActivity"
             android:label="@string/settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.GalleryActivity"
+            android:name=".activities.GalleryActivity"
             android:label="@string/gallery" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.GalleryActivityDetails"
+            android:name=".activities.GalleryActivityDetails"
             android:label="@string/gallery" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.CurriculaActivity"
+            android:name=".activities.CurriculaActivity"
             android:label="@string/study_plans" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.CurriculaActivityDetails"
+            android:name=".activities.CurriculaActivityDetails"
             android:label="@string/study_plans" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.OpeningHoursDetailActivity"
+            android:name=".activities.OpeningHoursDetailActivity"
             android:label="@string/opening_hours" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
         <activity
-            android:name="de.tum.in.tumcampusapp.activities.OpeningHoursListActivity"
+            android:name=".activities.OpeningHoursListActivity"
             android:label="@string/opening_hours" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -115,14 +115,15 @@
         </activity>
         <activity
             android:name=".activities.TransportationActivity"
-            android:label="@string/opening_hours" >
+            android:label="@string/mvv" 
+            android:configChanges="orientation">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.moecker.tumcampusapp.StartActivity" />
         </activity>
 
         <service
-            android:name="de.tum.in.tumcampusapp.services.DownloadService"
+            android:name=".services.DownloadService"
             android:exported="false" />
         <service
             android:name="de.tum.in.tumcampusapp.services.ImportService"

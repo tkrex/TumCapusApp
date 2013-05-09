@@ -82,6 +82,8 @@ public final class Const {
 	/** Action value "events" */
 	public static final String EVENTS = "events";
 
+	public static final String FACEBOOK = "www.facebook.com";
+
 	/** Action value "feeds" */
 	public static final String FEEDS = "feeds";
 
@@ -185,6 +187,8 @@ public final class Const {
 	/** TUMONLINE_PASSWORD identifier */
 	public static final String TUMONLINE_PASSWORD = "tumonline_password";
 
+	public static final String URL = "url";
+
 	/** Identifier of the URL column */
 	public static final String URL_COLUMN = "url";
 
@@ -193,8 +197,4 @@ public final class Const {
 
 	/** Identifier of the Weekday column */
 	public static final String WEEKDAY_COLUMN = "weekday";
-	
-	public static final String URL = "url";
-	
-	public static final String FACEBOOK = "www.facebook.com";
 }

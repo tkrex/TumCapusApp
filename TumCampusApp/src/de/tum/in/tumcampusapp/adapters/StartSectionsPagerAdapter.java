@@ -13,10 +13,10 @@ import de.tum.in.tumcampusapp.R;
 import de.tum.in.tumcampusapp.activities.CurriculaActivity;
 import de.tum.in.tumcampusapp.activities.GalleryActivity;
 import de.tum.in.tumcampusapp.activities.GradesActivity;
+import de.tum.in.tumcampusapp.activities.MockActivity;
 import de.tum.in.tumcampusapp.activities.NewsActivity;
 import de.tum.in.tumcampusapp.activities.OpeningHoursListActivity;
 import de.tum.in.tumcampusapp.activities.PlansActivity;
-import de.tum.in.tumcampusapp.activities.MockActivity;
 import de.tum.in.tumcampusapp.activities.TransportationActivity;
 import de.tum.in.tumcampusapp.auxiliary.ListMenuEntry;
 import de.tum.in.tumcampusapp.fragments.StartSectionFragment;
@@ -56,37 +56,33 @@ public class StartSectionsPagerAdapter extends FragmentPagerAdapter {
 			listMenuEntrySet.add(new ListMenuEntry(R.drawable.users, R.string.person_search, R.string.personsearch_addinfo, new Intent(activity,
 					MockActivity.class)));
 			listMenuEntrySet.add(new ListMenuEntry(R.drawable.web, R.string.plans, R.string.plans_addinfo, new Intent(activity, PlansActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.home, R.string.roomfinder, R.string.roomfinder_addinfo, new Intent(activity,
-					MockActivity.class)));
+			listMenuEntrySet
+					.add(new ListMenuEntry(R.drawable.home, R.string.roomfinder, R.string.roomfinder_addinfo, new Intent(activity, MockActivity.class)));
 			listMenuEntrySet.add(new ListMenuEntry(R.drawable.documents, R.string.study_plans, R.string.studyplans_addinfo, new Intent(activity,
 					CurriculaActivity.class)));
 			listMenuEntrySet.add(new ListMenuEntry(R.drawable.unlock, R.string.opening_hours, R.string.openinghours_addinfo, new Intent(activity,
 					OpeningHoursListActivity.class)));
 			break;
 		case 1:
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.calculator, R.string.lectures, R.string.lectures_addinfo, new Intent(activity,
-					MockActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.calculator, R.string.lectures, R.string.lectures_addinfo,
+					new Intent(activity, MockActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.chart, R.string.grades, R.string.grades_addinfo, new Intent(activity, GradesActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.calendar, R.string.timetable, R.string.timetable_addinfo,
+					new Intent(activity, MockActivity.class)));
 			listMenuEntrySet
-					.add(new ListMenuEntry(R.drawable.chart, R.string.grades, R.string.grades_addinfo, new Intent(activity, GradesActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.calendar, R.string.timetable, R.string.timetable_addinfo, new Intent(activity,
-					MockActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.finance, R.string.study_fee, R.string.studyfee_addinfo, new Intent(activity,
-					MockActivity.class)));
+					.add(new ListMenuEntry(R.drawable.finance, R.string.study_fee, R.string.studyfee_addinfo, new Intent(activity, MockActivity.class)));
 			break;
 		case 2:
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.fax, R.string.rss_feeds, R.string.rssfeed_addinfo, new Intent(activity,
-					MockActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.fax, R.string.rss_feeds, R.string.rssfeed_addinfo, new Intent(activity, MockActivity.class)));
 			listMenuEntrySet.add(new ListMenuEntry(R.drawable.news, R.string.tum_news, R.string.tumnews_addinfo, new Intent(activity, NewsActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.music, R.string.events, R.string.events_addinfo,
-					new Intent(activity, MockActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.pictures, R.string.gallery, R.string.gallery_addinfo, new Intent(activity,
-					GalleryActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.music, R.string.events, R.string.events_addinfo, new Intent(activity, MockActivity.class)));
+			listMenuEntrySet
+					.add(new ListMenuEntry(R.drawable.pictures, R.string.gallery, R.string.gallery_addinfo, new Intent(activity, GalleryActivity.class)));
 			break;
 		case 3:
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.show_info, R.string.mvv, R.string.mvv_addinfo, new Intent(activity,
-					TransportationActivity.class)));
-			listMenuEntrySet.add(new ListMenuEntry(R.drawable.notepad, R.string.menues, R.string.cafeteria_addinfo, new Intent(activity,
-					MockActivity.class)));
+			listMenuEntrySet
+					.add(new ListMenuEntry(R.drawable.show_info, R.string.mvv, R.string.mvv_addinfo, new Intent(activity, TransportationActivity.class)));
+			listMenuEntrySet.add(new ListMenuEntry(R.drawable.notepad, R.string.menues, R.string.cafeteria_addinfo, new Intent(activity, MockActivity.class)));
 			break;
 		}
 		args.putSerializable(LIST_ENTRY_SET, listMenuEntrySet);
