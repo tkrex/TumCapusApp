@@ -116,7 +116,7 @@ public final class R {
         public static final int zoom_out=0x7f020057;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0030;
+        public static final int action_settings=0x7f0a0032;
         public static final int activity_curricula_error_layout=0x7f0a0003;
         public static final int activity_curricula_list_view=0x7f0a0000;
         public static final int activity_curricula_progress_layout=0x7f0a0001;
@@ -137,23 +137,25 @@ public final class R {
         public static final int activity_plans_list_view=0x7f0a001e;
         public static final int activity_plans_web_view=0x7f0a001f;
         public static final int activity_start_loading_image=0x7f0a0020;
-        public static final int activity_transport_dosearch=0x7f0a0027;
-        public static final int activity_transport_listview_extern=0x7f0a0029;
-        public static final int activity_transport_listview_result=0x7f0a0028;
-        public static final int activity_transport_searchfield=0x7f0a0026;
+        public static final int activity_transport_domore=0x7f0a0026;
+        public static final int activity_transport_dosearch=0x7f0a0028;
+        public static final int activity_transport_listview_result=0x7f0a002a;
+        public static final int activity_transport_listview_suggestionsandsaved=0x7f0a002b;
+        public static final int activity_transport_searchfield=0x7f0a0027;
+        public static final int activity_transportation_progress_layout=0x7f0a0029;
         public static final int analogClock1=0x7f0a0025;
         public static final int date=0x7f0a001b;
-        public static final int fragment_item_detail_listview=0x7f0a002a;
+        public static final int fragment_item_detail_listview=0x7f0a002c;
         public static final int grade=0x7f0a0013;
         public static final int image=0x7f0a001a;
         public static final int imageView1=0x7f0a000e;
-        public static final int item_detail=0x7f0a002b;
+        public static final int item_detail=0x7f0a002d;
         public static final int item_detail_container=0x7f0a001c;
         public static final int item_list=0x7f0a001d;
-        public static final int list_menu_detail=0x7f0a002f;
-        public static final int list_menu_entry=0x7f0a002c;
-        public static final int list_menu_icon=0x7f0a002d;
-        public static final int list_menu_title=0x7f0a002e;
+        public static final int list_menu_detail=0x7f0a0031;
+        public static final int list_menu_entry=0x7f0a002e;
+        public static final int list_menu_icon=0x7f0a002f;
+        public static final int list_menu_title=0x7f0a0030;
         public static final int list_view=0x7f0a0023;
         public static final int lstGrades=0x7f0a0011;
         public static final int message=0x7f0a0019;

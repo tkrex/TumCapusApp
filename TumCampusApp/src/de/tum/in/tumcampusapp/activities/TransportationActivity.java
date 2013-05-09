@@ -11,12 +11,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import de.tum.in.tumcampusapp.R;
@@ -31,6 +33,8 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 	private EditText searchTextField;
 	private ListView listViewResults;
 	private ListView listViewSuggestionsAndSaved = null;
+	private RelativeLayout progressLayout;
+	private TransportManager transportaionManager;
 
 	/**
 	 * Check if a network connection is available or can be available soon
@@ -53,15 +57,16 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		setContentView(R.layout.activity_transportation);
 
 		// get all stations from db
-		TransportManager tm = new TransportManager(this);
-		Cursor c = tm.getAllFromDb();
+		transportaionManager = new TransportManager(this);
+		Cursor stationCursor = transportaionManager.getAllFromDb();
 
-		listViewResults = (ListView) findViewById(R.id.activity_transport_listview_result);
-		listViewSuggestionsAndSaved = (ListView) findViewById(R.id.activity_transport_listview_extern);
 		searchTextField = (EditText) findViewById(R.id.activity_transport_searchfield);
+		listViewResults = (ListView) findViewById(R.id.activity_transport_listview_result);
+		listViewSuggestionsAndSaved = (ListView) findViewById(R.id.activity_transport_listview_suggestionsandsaved);
+		progressLayout = (RelativeLayout) findViewById(R.id.activity_transportation_progress_layout);
 
 		@SuppressWarnings("deprecation")
-		ListAdapter adapterSuggestionsAndSaved = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, c, c.getColumnNames(),
+		ListAdapter adapterSuggestionsAndSaved = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, stationCursor, stationCursor.getColumnNames(),
 				new int[] { android.R.id.text1 });
 
 		listViewSuggestionsAndSaved.setAdapter(adapterSuggestionsAndSaved);
@@ -69,9 +74,9 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		listViewSuggestionsAndSaved.setOnItemLongClickListener(this);
 
 		// initialize empty departure list, disable on click in list
-		MatrixCursor c2 = new MatrixCursor(new String[] { "name", "desc", "_id" });
+		MatrixCursor departureCursor = new MatrixCursor(new String[] { "name", "desc", "_id" });
 		@SuppressWarnings("deprecation")
-		SimpleCursorAdapter adapterResults = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, c2, c2.getColumnNames(), new int[] {
+		SimpleCursorAdapter adapterResults = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, departureCursor, departureCursor.getColumnNames(), new int[] {
 				android.R.id.text1, android.R.id.text2 }) {
 
 			@Override
@@ -86,36 +91,44 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		int viewId = view.getId();
 		switch (viewId) {
 		case R.id.activity_transport_dosearch:
+			((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+					searchTextField.getWindowToken(), 0);
 			searchForStations(searchTextField.getText().toString());
+			break;
+		case R.id.activity_transport_domore:
+			Cursor stationCursor = transportaionManager.getAllFromDb();
+			SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
+			adapter.changeCursor(stationCursor);			
+			listViewResults.setVisibility(View.GONE);
+			listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
 			break;
 		}
 	}
 
 	public boolean searchForStations(final String inputText) {
-
-		// search station in new thread, show progress dialog during search
-		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.loading), true);
-
 		final Activity activity = this;
+		progressLayout.setVisibility(View.VISIBLE);
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-
-				// search station on website
+				// Searchs station on website
 				String message = "";
 				TransportManager tm = new TransportManager(activity);
-				Cursor c = null;
+				Cursor stationCursor = null;
 				try {
 					if (!connected()) {
 						throw new Exception(getString(R.string.no_internet_connection));
 					}
-					c = tm.getStationsFromExternal(inputText);
+					stationCursor = tm.getStationsFromExternal(inputText);
 				} catch (Exception e) {
-					message = e.getMessage();
+					// show errors in departures list
+					MatrixCursor stationMatrixCursor = new MatrixCursor(new String[] { "name", "_id" });
+					stationMatrixCursor.addRow(new String[] { e.getMessage(), "0" });
+					stationCursor = stationMatrixCursor;
 				}
 
-				final Cursor c2 = c;
+				final Cursor finalStationCursor = stationCursor;
 				final String message2 = message;
 
 				// show stations from search result in station list
@@ -123,16 +136,12 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						progress.hide();
-
-						if (c2 != null) {
+						progressLayout.setVisibility(View.GONE);
+						if (finalStationCursor != null) {
 							SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewSuggestionsAndSaved.getAdapter();
-							adapter.changeCursor(c2);
+							adapter.changeCursor(finalStationCursor);
 							listViewSuggestionsAndSaved.setVisibility(View.VISIBLE);
 							listViewResults.setVisibility(View.GONE);
-						}
-						if (message2.length() > 0) {
-							Toast.makeText(activity, message2, Toast.LENGTH_LONG).show();
 						}
 					}
 				});
@@ -144,8 +153,8 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 	@Override
 	public void onItemClick(final AdapterView<?> av, View v, int position, long id) {
 		// click on station in list
-		Cursor c = (Cursor) av.getAdapter().getItem(position);
-		final String location = c.getString(c.getColumnIndex(Const.NAME_COLUMN));
+		Cursor departureCursor = (Cursor) av.getAdapter().getItem(position);
+		final String location = departureCursor.getString(departureCursor.getColumnIndex(Const.NAME_COLUMN));
 
 		// save clicked station into db and refresh station list
 		// (could be clicked on search result list)
@@ -154,36 +163,35 @@ public class TransportationActivity extends Activity implements OnItemClickListe
 		tm.replaceIntoDb(location);
 		adapter.changeCursor(tm.getAllFromDb());
 
-		// load departures in new thread, show progress dialog during load
-		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.loading), true);
+		progressLayout.setVisibility(View.VISIBLE);
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// get departures from website
 				TransportManager tm = new TransportManager(av.getContext());
-				Cursor c = null;
+				Cursor departureCursor = null;
 				try {
 					if (!connected()) {
 						throw new Exception(getString(R.string.no_internet_connection));
 					}
-					c = tm.getDeparturesFromExternal(location);
+					departureCursor = tm.getDeparturesFromExternal(location);
 
 				} catch (Exception e) {
 					// show errors in departures list
-					MatrixCursor c2 = new MatrixCursor(new String[] { "name", "desc", "_id" });
-					c2.addRow(new String[] { e.getMessage(), "", "0" });
-					c = c2;
+					MatrixCursor departureMatrixCursor = new MatrixCursor(new String[] { "name", "desc", "_id" });
+					departureMatrixCursor.addRow(new String[] { e.getMessage(), "", "0" });
+					departureCursor = departureMatrixCursor;
 				}
 
 				// show departures in list
-				final Cursor c2 = c;
+				final Cursor finalDepartureCursor = departureCursor;
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						progress.hide();
+						progressLayout.setVisibility(View.GONE);
 						SimpleCursorAdapter adapter = (SimpleCursorAdapter) listViewResults.getAdapter();
-						adapter.changeCursor(c2);
+						adapter.changeCursor(finalDepartureCursor);
 						listViewSuggestionsAndSaved.setVisibility(View.GONE);
 						listViewResults.setVisibility(View.VISIBLE);
 					}

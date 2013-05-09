@@ -325,6 +325,7 @@ public class Utils {
 		try {
 			entity = httpclient.execute(new HttpGet(url)).getEntity();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception("Timeout");
 		}
 

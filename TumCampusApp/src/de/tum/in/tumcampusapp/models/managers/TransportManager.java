@@ -64,7 +64,7 @@ public class TransportManager {
 				.getJSONArray("p");
 
 		if (jsonArray.length() < 3) {
-			throw new Exception("<Keine Abfahrten gefunden>");
+			throw new Exception("No departures found");
 		}
 
 		MatrixCursor mc = new MatrixCursor(new String[] { "name", "desc", "_id" });
